@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">SumeFly</string>
+    <string name="login">LOGIN</string>
+    <string name="password">PASSWORD</string>
+    <string name="email">EMAIL</string>
+    <string name="start_recording">Start recording</string>
+    <string name="pause_reording">Pause reording</string>
+    <string name="stop_recording">Stop recording</string>
+    <string name="logo">Logo</string>
+</resources>

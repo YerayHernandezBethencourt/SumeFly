@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cardView"
+    app:cardCornerRadius="20dp"
+    android:animateLayoutChanges="true"
+    app:cardElevation="4dp"
+    app:cardUseCompatPadding="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:animateLayoutChanges="true">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="6dp"
+            tools:ignore="UselessParent">
+            <ImageView
+                android:id="@+id/imgFoto"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="6dp"
+                android:src="@drawable/ic_launcher_background" />
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/linearLayout"
+                android:orientation="vertical"
+                android:layout_toEndOf="@+id/imgFoto"
+                android:layout_marginTop="2dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginLeft="4dp">
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/etTitulo"
+                    android:layout_marginBottom="2dp"
+                    android:text="Escribe un titulo"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    android:inputType="text" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/txtDescripcion"
+                    android:text="fecha"
+                    android:textSize="16sp" />
+            </LinearLayout>
+        </RelativeLayout>
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

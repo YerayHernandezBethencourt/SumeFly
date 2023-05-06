@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#C4EDF1"
+    tools:context=".MainActivity">
+
+    <Chronometer
+        android:id="@+id/crono"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="180dp"
+        android:layout_marginTop="72dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imgResumefly" />
+
+    <ImageView
+        android:id="@+id/imgResumefly"
+        android:layout_width="261dp"
+        android:layout_height="197dp"
+        android:layout_marginStart="64dp"
+        android:layout_marginTop="64dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/logo"
+        android:contentDescription="@string/logo" />
+
+    <ImageView
+        android:id="@+id/imgGrabar"
+        android:layout_width="90dp"
+        android:layout_height="167dp"
+        android:layout_marginStart="64dp"
+        android:layout_marginTop="100dp"
+        android:onClick="grabar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imgResumefly"
+        app:srcCompat="@drawable/play_image"
+        tools:ignore="SpeakableTextPresentCheck"
+        android:contentDescription="@string/start_recording" />
+
+    <ImageView
+        android:id="@+id/imgPausar"
+        android:layout_width="90dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="100dp"
+        android:layout_marginEnd="68dp"
+        android:onClick="pausar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imgResumefly"
+        app:srcCompat="@drawable/image_pause2"
+        tools:ignore="SpeakableTextPresentCheck"
+        android:contentDescription="@string/pause_reording" />
+
+    <ImageView
+        android:id="@+id/imgDetener"
+        android:layout_width="90dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="148dp"
+        android:layout_marginBottom="76dp"
+        android:onClick="detenerGrabacion"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/stop_image2"
+        tools:ignore="SpeakableTextPresentCheck"
+        android:contentDescription="@string/stop_recording" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
