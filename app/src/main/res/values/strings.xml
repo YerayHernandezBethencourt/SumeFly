@@ -1,10 +1,13 @@
 <resources>
     <string name="app_name">SumeFly</string>
-    <string name="login">LOGIN</string>
-    <string name="password">PASSWORD</string>
-    <string name="email">EMAIL</string>
-    <string name="start_recording">Start recording</string>
-    <string name="pause_reording">Pause reording</string>
-    <string name="stop_recording">Stop recording</string>
+    <string name="login">Login</string>
+    <string name="password">Contraseña</string>
+    <string name="email">Email</string>
+    <string name="start_recording">Comienzo de grabacion</string>
+    <string name="pause_reording">Grabación pausada</string>
+    <string name="stop_recording">Fin de grabación</string>
     <string name="logo">Logo</string>
+    <string name="menu">Menu</string>
+    <string name="grabar">Grabar</string>
+    <string name="grabaciones">Grabaciones</string>
 </resources>

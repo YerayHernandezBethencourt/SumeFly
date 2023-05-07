@@ -2,10 +2,13 @@ package com.example.sumefly;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Chronometer;
 import android.widget.ImageView;
@@ -15,6 +18,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.sumefly.database.DBAudio;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -29,8 +34,6 @@ public class MainActivity extends AppCompatActivity {
     ImageView imgDetener = null;
     ImageView imgPausar = null;
     List<ListElement> listElements;
-
-    private String archivoAudio = null;
 
     private Chronometer crono;
     private long tiempo = 0;
@@ -55,7 +58,8 @@ public class MainActivity extends AppCompatActivity {
         }
         init();
     }
-    //de momento lo declaramos manual
+    //YERAY. ESTO MAÑANA LO HACEMOS
+    //de momento lo declaramos los datos de forma manual
     //Luego tendremos que recogerlo de la base de datos
     public void init(){
         imgGrabar = findViewById(R.id.imgGrabar);
@@ -77,8 +81,8 @@ public class MainActivity extends AppCompatActivity {
         }
     }
     //Metodos para la grabacion
-    //Un botón para grabar, uno para pausar y otro para detener la grabacion
-public void grabar(View view){
+    //Método para comenzar la grabacion
+    public void grabar(View view){
         //Si no hay una grabacion en curso
         if(grabadora == null){
             if(estado == 0){
@@ -87,7 +91,7 @@ public void grabar(View view){
                 //Se crea una nueva grabadora
                 grabadora = new MediaRecorder();
                 //Se le asigna la ruta donde se guardara el archivo
-                ruta = getExternalCacheDir().getAbsolutePath() + "/grabacion.3gp";
+                ruta = getExternalFilesDir(null).getAbsolutePath() + "/grabacion.mp3";
                 //Se le asigna el microfono como fuente de audio
                 grabadora.setAudioSource(MediaRecorder.AudioSource.MIC);
                 //Se le asigna el formato de salida
@@ -157,6 +161,7 @@ public void grabar(View view){
             Toast.makeText(this, "Continuando la grabacion", Toast.LENGTH_SHORT).show();
         }
     }
+    //Metodo para pausar la grabacion
     public void pausar(View view){
         //Si hay una grabacion en curso
         if(grabadora != null){
@@ -181,9 +186,9 @@ public void grabar(View view){
         }
     }
     //Metodo para detener la grabacion
-    public void detenerGrabacion(View view){
+    public void detenerGrabacion(View view) {
         //Si hay una grabacion en curso
-        if(grabadora != null){
+        if (grabadora != null) {
             //Se detiene la grabacion
             grabadora.stop();
             //Se libera la grabadora
@@ -209,9 +214,36 @@ public void grabar(View view){
             tiempo = 0;
             //Se establece el estado a detenido
             estado = 0;
-            //Se muestra un mensaje
-            Toast.makeText(this, "Grabación finalizada...", Toast.LENGTH_SHORT).show();
+            //Se instancia nuestra base de datos
+            DBAudio dbAudio = new DBAudio(this);
+            //Se crea un objeto de tipo Audio
+            dbAudio.insertarAudio(3, 101, "titulo provisional", ruta);
         }
     }
 
+    public boolean onCreateOptionsMenu(Menu menu){
+        getMenuInflater().inflate(R.menu.menu_principal, menu);
+        return true;
+    }
+
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu:
+                losRegistro();
+                return true;
+            case R.id.menu2:
+                nuevaGrabacion();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+    public void losRegistro(){
+        Intent intent = new Intent(this, ListElement.class);
+        startActivity(intent);
+    }
+    public void nuevaGrabacion(){
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+    }
 }

@@ -7,12 +7,11 @@ android {
     compileSdk 33
 
     defaultConfig {
-        applicationId "com.example.sumefly"
-        sourceSets {
-            main {
-                jniLibs.srcDirs = ['src/main/python']
-            }
-        }
+        //applicationId "com.example.sumefly"
+        //python {
+        //    buildPython "C:/Python399/python.exe"
+        //}
+
         minSdk 29
         targetSdk 33
         versionCode 1
@@ -21,9 +20,6 @@ android {
         ndk {
             abiFilters "armeabi-v7a", "arm64-v8a", "x86", "x86_64"
         }
-        //python{
-        //    buildPython "C:/Users/sumef/AppData/Local/Programs/Python/Python39/python.exe"
-        //}
     }
 
 
