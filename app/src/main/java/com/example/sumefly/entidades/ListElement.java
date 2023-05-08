@@ -1,4 +1,4 @@
-package com.example.sumefly;
+package com.example.sumefly.entidades;
 
 public class ListElement {
     public String title;

@@ -17,13 +17,6 @@
         android:theme="@style/Theme.SumeFly"
         tools:targetApi="31">
         <activity
-            android:name=".Transcription"
-            android:exported="false">
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
-        <activity
             android:name=".LoginActivity"
             android:exported="true">
             <intent-filter>
@@ -32,12 +25,17 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
         </activity>
         <activity
             android:name=".MainActivity"
+            android:exported="true" >
+            <!--<meta-data-->
+            <!--    android:name="android.support.PARENT_ACTIVITY"-->
+            <!--    android:value=".MainActivity"/>-->
+            <!--<meta-data/>-->
+        </activity>
+        <activity
+            android:name=".DirectorioPersonal"
             android:exported="true" />
     </application>
 

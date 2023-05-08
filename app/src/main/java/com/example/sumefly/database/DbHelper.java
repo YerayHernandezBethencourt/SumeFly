@@ -8,6 +8,8 @@ import android.database.sqlite.SQLiteOpenHelper;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import java.time.format.DateTimeFormatter;
+
 public class DbHelper extends SQLiteOpenHelper {
 
     private static final int DATABASE_VERSION = 1; //incrementar al reailzar cambios en la base de datos
@@ -23,6 +25,7 @@ public class DbHelper extends SQLiteOpenHelper {
     public static final String COLUMN_ID_USER = "id_user";
     public static final String AUDIO_TITLE = "title";
     public static final String AUDIO = "audio";
+    public static final String FECHA = "fecha";
 
     public static final String TABLE_TRANSCRIPTIONS = "t_transcriptions";
     public static final String COLUMN_ID_TRANSCRIPTION = "id_transcription";
@@ -38,7 +41,6 @@ public class DbHelper extends SQLiteOpenHelper {
 
         db.execSQL("CREATE TABLE " + TABLE_USER + "(" +
                 COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
-                COLUMN_NOMBRE + " TEXT NOT NULL," +
                 COLUMN_EMAIL + " TEXT NOT NULL," +
                 COLUMN_PASSWORD + " TEXT NOT NULL" +
                 ");"
@@ -48,6 +50,7 @@ public class DbHelper extends SQLiteOpenHelper {
                 COLUMN_ID_USER + " INTEGER NOT NULL," +
                 AUDIO_TITLE + " TEXT NOT NULL," +
                 AUDIO + " TEXT NOT NULL," +
+                FECHA + " TIMESTAMP DEFAULT CURRENT_TIMESTAMP," +
                 "FOREIGN KEY (" + COLUMN_ID_USER + ") REFERENCES " +
                 TABLE_USER + "(" + COLUMN_ID + ")" +
                 ");"

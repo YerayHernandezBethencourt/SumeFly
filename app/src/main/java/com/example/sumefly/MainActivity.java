@@ -1,6 +1,7 @@
 package com.example.sumefly;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -16,14 +17,17 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.sumefly.database.DBAudio;
+import com.example.sumefly.database.DbUsuario;
+import com.example.sumefly.entidades.Audios;
+import com.example.sumefly.entidades.ListElement;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -33,7 +37,12 @@ public class MainActivity extends AppCompatActivity {
     ImageView imgGrabar = null;
     ImageView imgDetener = null;
     ImageView imgPausar = null;
-    List<ListElement> listElements;
+
+    //RecyclerView listaAudios;
+    ArrayList<Audios> listaArrayAudios;
+    LocalDateTime fecha = null;
+
+    Context context;
 
     private Chronometer crono;
     private long tiempo = 0;
@@ -45,6 +54,9 @@ public class MainActivity extends AppCompatActivity {
 
         crono = findViewById(R.id.crono);
         Context context = getApplicationContext();
+        imgGrabar = findViewById(R.id.imgGrabar);
+        imgDetener = findViewById(R.id.imgDetener);
+        imgPausar = findViewById(R.id.imgPausar);
 
         // Verifica si los permisos están concedidos
         if(ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED ||
@@ -56,30 +68,8 @@ public class MainActivity extends AppCompatActivity {
             // Los permisos ya están concedidos, puedes realizar las acciones que requieren los permisos
             System.out.println("Los permisos ya están concedidos, puedes realizar las acciones que requieren los permisos");
         }
-        init();
     }
-    //YERAY. ESTO MAÑANA LO HACEMOS
-    //de momento lo declaramos los datos de forma manual
-    //Luego tendremos que recogerlo de la base de datos
-    public void init(){
-        imgGrabar = findViewById(R.id.imgGrabar);
-        imgDetener = findViewById(R.id.imgDetener);
-        imgPausar = findViewById(R.id.imgPausar);
 
-        listElements = new ArrayList<>();
-        listElements.add(new ListElement("Titulo 1", "Fecha 1"));
-        listElements.add(new ListElement("Titulo 2", "Fecha 2"));
-        listElements.add(new ListElement("Titulo 3", "Fecha 3"));
-
-        ListAdapter listAdapter = new ListAdapter(listElements, this);
-        RecyclerView recyclerView = findViewById(R.id.recycleviewList);
-        if (recyclerView != null) {
-            recyclerView.setHasFixedSize(true);
-            recyclerView.setHasFixedSize(true);
-            recyclerView.setAdapter(listAdapter);
-            recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        }
-    }
     //Metodos para la grabacion
     //Método para comenzar la grabacion
     public void grabar(View view){
@@ -114,12 +104,14 @@ public class MainActivity extends AppCompatActivity {
                 crono.start();
             } else if(estado == 2){
                 //Se reanuda la grabacion
+                //assert false; preguntar que hace esto
                 grabadora.resume();
                 //Se reanuda el cronometro
                 crono.start();
                 //Se cambia el estado a grabando
                 estado = 1;
             }
+
             //Se oscurece la imagen del boton de grabar
             imgGrabar.setImageResource(R.drawable.image_play2);
             //Se acalara la imagen del boton de pausar
@@ -161,7 +153,7 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, "Continuando la grabacion", Toast.LENGTH_SHORT).show();
         }
     }
-    //Metodo para pausar la grabacion
+    //Metodo para pausar la grabacsetImageResourceion
     public void pausar(View view){
         //Si hay una grabacion en curso
         if(grabadora != null){
@@ -214,13 +206,26 @@ public class MainActivity extends AppCompatActivity {
             tiempo = 0;
             //Se establece el estado a detenido
             estado = 0;
-            //Se instancia nuestra base de datos
-            DBAudio dbAudio = new DBAudio(this);
+            //Se instancia nuestra clase DBAudio
+            DBAudio dbAudio = new DBAudio(context);
+            //Se instancia nuestra clase DBUsuario
+            DbUsuario dbUsuario = new DbUsuario(MainActivity.this);
+            //Se establece la hora actual
+            fecha = LocalDateTime.now();
+            //Se crea un modificador de formato de fecha
+            DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+            String fechaFormateada = fecha.format(formato);
+            //Se obtiene el id del usuario
+            int idUsuario = dbUsuario.obtenerIdUsuario();
             //Se crea un objeto de tipo Audio
-            dbAudio.insertarAudio(3, 101, "titulo provisional", ruta);
+            dbAudio.insertarAudio(idUsuario, "title", ruta, fechaFormateada);
+
+            Toast.makeText(this, "Grabacion finalizada", Toast.LENGTH_SHORT).show();
+            dbAudio.close();
+            dbUsuario.close();
+
         }
     }
-
     public boolean onCreateOptionsMenu(Menu menu){
         getMenuInflater().inflate(R.menu.menu_principal, menu);
         return true;
@@ -229,7 +234,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu:
-                losRegistro();
+                losRegistros();
                 return true;
             case R.id.menu2:
                 nuevaGrabacion();
@@ -238,12 +243,28 @@ public class MainActivity extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
         }
     }
-    public void losRegistro(){
-        Intent intent = new Intent(this, ListElement.class);
+    public void losRegistros(){
+        Intent intent = new Intent(this, DirectorioPersonal.class);
         startActivity(intent);
     }
     public void nuevaGrabacion(){
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
     }
+
+    //public void agregarItemList(Context context){
+//
+    //    listaAudios = findViewById(R.id.listaAudios);
+    //    listaAudios.setLayoutManager(new LinearLayoutManager(this));
+//
+    //    DBAudio dbAudio = new DBAudio(context);
+//
+    //    listaArrayAudios = new ArrayList<>();
+//
+    //    ListaAudiosAdapter adapter = new ListaAudiosAdapter(dbAudio.mostrarAudios());
+//
+    //    listaAudios.setAdapter(adapter);
+//
+    //    losRegistros();
+    //}
 }
