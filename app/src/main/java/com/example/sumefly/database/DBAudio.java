@@ -21,20 +21,24 @@ public class DBAudio extends DbHelper{
         this.context = context;
     }
 
-    public long insertarAudio(int id_user, String title, String audio, String fecha){
+    public long insertarAudio(int id_user, String title, byte[] audio, String fecha){
         long id = 0;
         try{
             DbHelper dbHelper = new DbHelper(context);
-            SQLiteDatabase db = dbHelper.getWritableDatabase();
+            SQLiteDatabase db = dbHelper.getWritableDatabase(); //SE QUEDA AQUI
+            System.out.println("klklklklklklklklklkklklklklklklklklklklkklklklklklklklklklklkkl3");
             ContentValues values = new ContentValues();
+            System.out.println("klklklklklklklklklkklklklklklklklklklklkklklklklklklklklklklkkl4");
 
             values.put("id_user", id_user);
             values.put("title", title);
             values.put("audio", audio);
             values.put("fecha", fecha);
+            System.out.println("klklklklklklklklklkklklklklklklklklklklkklklklklklklklklklklkkl5");
             db.insert(TABLE_RECORDS, null, values);
+            System.out.println("klklklklklklklklklkklklklklklklklklklklkklklklklklklklklklklkkl5");
             id = db.insert(TABLE_RECORDS, null, values);
-
+            System.out.println("ID: " + id);
         }catch(Exception ex){
             ex.toString();
         }

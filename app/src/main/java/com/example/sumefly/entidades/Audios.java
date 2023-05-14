@@ -1,14 +1,26 @@
 package com.example.sumefly.entidades;
 
+import java.sql.Blob;
 import java.sql.Timestamp;
 
 public class Audios {
+    public Audios(int id, int id_record, int id_user, String title, Blob audio, Timestamp fecha) {
+        this.id = id;
+        this.id_record = id_record;
+        this.id_user = id_user;
+        this.title = title;
+        this.audio = audio;
+        this.fecha = fecha;
+    }
+
+    public Audios() {
+    }
 
     private int id;
     private int id_record;
     private int id_user;
     private String title;
-    private String audio;
+    private Blob audio;
     private Timestamp fecha;
 
     public int getId() {
@@ -43,11 +55,11 @@ public class Audios {
         this.title = title;
     }
 
-    public String getAudio() {
+    public Blob getAudio() {
         return audio;
     }
 
-    public void setAudio(String audio) {
+    public void setAudio(Blob audio) {
         this.audio = audio;
     }
 
@@ -57,5 +69,8 @@ public class Audios {
 
     public void setFecha(Timestamp fecha) {
         this.fecha = fecha;
+    }
+
+    public void setAudio(String string) {
     }
 }

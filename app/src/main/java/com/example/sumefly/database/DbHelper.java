@@ -49,20 +49,20 @@ public class DbHelper extends SQLiteOpenHelper {
                 COLUMN_ID_RECORD + " INTEGER PRIMARY KEY AUTOINCREMENT," +
                 COLUMN_ID_USER + " INTEGER NOT NULL," +
                 AUDIO_TITLE + " TEXT NOT NULL," +
-                AUDIO + " TEXT NOT NULL," +
+                AUDIO + " BLOB NOT NULL," +
                 FECHA + " TIMESTAMP DEFAULT CURRENT_TIMESTAMP," +
                 "FOREIGN KEY (" + COLUMN_ID_USER + ") REFERENCES " +
                 TABLE_USER + "(" + COLUMN_ID + ")" +
                 ");"
         );
-        //db.execSQL("CREATE TABLE " + TABLE_TRANSCRIPTIONS + "(" +
-        //        COLUMN_ID_TRANSCRIPTION + " INTEGER PRIMARY KEY AUTOINCREMENT," +
-        //        COLUMN_ID_RECORD_TRANSCRIPTION + " INTEGER NOT NULL," +
-        //        TRANSCRIPTION + " TEXT NOT NULL," +
-        //        "FOREIGN KEY (" + COLUMN_ID_RECORD_TRANSCRIPTION + ") REFERENCES " +
-        //        TABLE_RECORDS + "(" + COLUMN_ID_RECORD + ")" +
-        //        ");"
-        //);
+        db.execSQL("CREATE TABLE " + TABLE_TRANSCRIPTIONS + "(" +
+                COLUMN_ID_TRANSCRIPTION + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                COLUMN_ID_RECORD_TRANSCRIPTION + " INTEGER NOT NULL," +
+                TRANSCRIPTION + " TEXT NOT NULL," +
+                "FOREIGN KEY (" + COLUMN_ID_RECORD_TRANSCRIPTION + ") REFERENCES " +
+                TABLE_RECORDS + "(" + COLUMN_ID_RECORD + ")" +
+                ");"
+        );
 
     }
 

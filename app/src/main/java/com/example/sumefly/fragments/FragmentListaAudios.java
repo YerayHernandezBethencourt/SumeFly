@@ -1,36 +1,38 @@
-package com.example.sumefly.adapadores;
+package com.example.sumefly.fragments;
 
 import android.content.Context;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.sumefly.R;
+import com.example.sumefly.adapadores.ListaAudiosAdapter;
 import com.example.sumefly.entidades.Audios;
 
 import java.util.ArrayList;
 
-public class ListaAudiosAdapter extends RecyclerView.Adapter<ListaAudiosAdapter.AudioViewHolder> implements View.OnClickListener{
-
+public class FragmentListaAudios extends Fragment implements View.OnClickListener {
     ArrayList<Audios> listaArrayAudios;
     LayoutInflater inflater;
     //listener
     private View.OnClickListener listener;
 
-    public ListaAudiosAdapter(Context context, ArrayList<Audios> listaArrayAudios) {
+    public void ListaAudiosAdapter(Context context, ArrayList<Audios> listaArrayAudios) {
         this.inflater = LayoutInflater.from(context);
         this.listaArrayAudios = listaArrayAudios;
     }
 
-    public static class AudioViewHolder extends RecyclerView.ViewHolder {
+    public class AudioViewHolder extends RecyclerView.ViewHolder {
 
-        public EditText etNombreAudio;
-        public TextView fechaAudio;
+        EditText etNombreAudio;
+        TextView fechaAudio;
         public AudioViewHolder(@NonNull View itemView) {
             super(itemView);
             etNombreAudio = itemView.findViewById(R.id.etTitleElement);
@@ -49,19 +51,17 @@ public class ListaAudiosAdapter extends RecyclerView.Adapter<ListaAudiosAdapter.
     }
 
     @NonNull
-    @Override
-    public AudioViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public ListaAudiosAdapter.AudioViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.audio_item, parent, false);
-        return new AudioViewHolder(view);
+        return new ListaAudiosAdapter.AudioViewHolder(view);
     }
 
-    @Override
-    public void onBindViewHolder(@NonNull AudioViewHolder holder, int position) {
+
+    public void onBindViewHolder(@NonNull ListaAudiosAdapter.AudioViewHolder holder, int position) {
         holder.etNombreAudio.setText(listaArrayAudios.get(position).getTitle());
         holder.fechaAudio.setText(listaArrayAudios.get(position).getFecha().toString());
     }
 
-    @Override
     public int getItemCount() {
         return listaArrayAudios.size();
     }

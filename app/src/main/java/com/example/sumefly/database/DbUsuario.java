@@ -8,13 +8,15 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.example.sumefly.entidades.Usuarios;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.util.ArrayList;
 
 public class DbUsuario extends DbHelper{
 
     Context context;
 
-    public DbUsuario(Context context) {
+    public DbUsuario(@Nullable Context context) {
         super(context);
         this.context = context;
     }
