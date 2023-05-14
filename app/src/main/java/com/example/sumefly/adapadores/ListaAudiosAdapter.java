@@ -19,8 +19,17 @@ public class ListaAudiosAdapter extends RecyclerView.Adapter<ListaAudiosAdapter.
 
     ArrayList<Audios> listaArrayAudios;
     LayoutInflater inflater;
+
     //listener
     private View.OnClickListener listener;
+
+    @NonNull
+    @Override
+    public AudioViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.audio_item, parent, false);
+        view.setOnClickListener(this);
+        return new AudioViewHolder(view);
+    }
 
     public ListaAudiosAdapter(Context context, ArrayList<Audios> listaArrayAudios) {
         this.inflater = LayoutInflater.from(context);
@@ -36,6 +45,7 @@ public class ListaAudiosAdapter extends RecyclerView.Adapter<ListaAudiosAdapter.
             etNombreAudio = itemView.findViewById(R.id.etTitleElement);
             fechaAudio = itemView.findViewById(R.id.txtFecha);
         }
+
     }
 
     public void setOnClickListener(View.OnClickListener listener){
@@ -46,13 +56,6 @@ public class ListaAudiosAdapter extends RecyclerView.Adapter<ListaAudiosAdapter.
         if(listener != null){
             listener.onClick(view);
         }
-    }
-
-    @NonNull
-    @Override
-    public AudioViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.audio_item, parent, false);
-        return new AudioViewHolder(view);
     }
 
     @Override

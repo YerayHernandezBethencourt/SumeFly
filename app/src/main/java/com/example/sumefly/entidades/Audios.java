@@ -1,9 +1,10 @@
 package com.example.sumefly.entidades;
 
+import java.io.Serializable;
 import java.sql.Blob;
 import java.sql.Timestamp;
 
-public class Audios {
+public class Audios implements Serializable {
     public Audios(int id, int id_record, int id_user, String title, Blob audio, Timestamp fecha) {
         this.id = id;
         this.id_record = id_record;
@@ -11,6 +12,15 @@ public class Audios {
         this.title = title;
         this.audio = audio;
         this.fecha = fecha;
+    }
+    public Audios(String title, String fecha) {
+        this.title = title;
+        this.fecha = Timestamp.valueOf(fecha);
+    }
+    public Audios(int id, String title, String fecha) {
+        this.id = id;
+        this.title = title;
+        this.fecha = Timestamp.valueOf(fecha);
     }
 
     public Audios() {

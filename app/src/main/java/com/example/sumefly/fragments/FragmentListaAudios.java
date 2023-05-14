@@ -1,68 +1,100 @@
 package com.example.sumefly.fragments;
 
+import static com.example.sumefly.R.id.recyclerViewListaAudios;
+
+import android.app.Activity;
 import android.content.Context;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
-import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.sumefly.R;
 import com.example.sumefly.adapadores.ListaAudiosAdapter;
 import com.example.sumefly.entidades.Audios;
+import com.example.sumefly.interfaces.iComunicarFragments;
 
 import java.util.ArrayList;
 
-public class FragmentListaAudios extends Fragment implements View.OnClickListener {
+public class FragmentListaAudios extends Fragment {
     ArrayList<Audios> listaArrayAudios;
-    LayoutInflater inflater;
-    //listener
-    private View.OnClickListener listener;
+    ListaAudiosAdapter listaAudiosAdapter;
+    RecyclerView recyclerViewAudios;
 
-    public void ListaAudiosAdapter(Context context, ArrayList<Audios> listaArrayAudios) {
-        this.inflater = LayoutInflater.from(context);
-        this.listaArrayAudios = listaArrayAudios;
+    //para el detalle del audio
+    Activity activity;
+    iComunicarFragments interfaceComunicaFragments;
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View vistaAudios = inflater.inflate(R.layout.fragment_lista_audios, container, false);
+        recyclerViewAudios = vistaAudios.findViewById(recyclerViewListaAudios);
+        listaArrayAudios = new ArrayList<>();
+        //cargar la lista de audios
+        cargarListaAudios();
+        //mostrar la lista de audios
+        mostrarListaAudios();
+
+        return vistaAudios;
     }
 
-    public class AudioViewHolder extends RecyclerView.ViewHolder {
+    private void cargarListaAudios() {
+        listaArrayAudios.add(new Audios("Audio 1", "2020-12-20 12:00:00"));
+        listaArrayAudios.add(new Audios("Audio 2", "2020-12-20 12:10:00"));
+        listaArrayAudios.add(new Audios("Audio 3", "2020-12-20 12:20:00"));
+        listaArrayAudios.add(new Audios("Audio 1", "2020-12-20 12:00:00"));
+        listaArrayAudios.add(new Audios("Audio 2", "2020-12-20 12:10:00"));
+        listaArrayAudios.add(new Audios("Audio 3", "2020-12-20 12:20:00"));
+        listaArrayAudios.add(new Audios("Audio 1", "2020-12-20 12:00:00"));
+        listaArrayAudios.add(new Audios("Audio 2", "2020-12-20 12:10:00"));
+        listaArrayAudios.add(new Audios("Audio 3", "2020-12-20 12:20:00"));
+        listaArrayAudios.add(new Audios("Audio 1", "2020-12-20 12:00:00"));
+        listaArrayAudios.add(new Audios("Audio 2", "2020-12-20 12:10:00"));
+        listaArrayAudios.add(new Audios("Audio 3", "2020-12-20 12:20:00"));
+        listaArrayAudios.add(new Audios("Audio 1", "2020-12-20 12:00:00"));
+        listaArrayAudios.add(new Audios("Audio 2", "2020-12-20 12:10:00"));
+        listaArrayAudios.add(new Audios("Audio 3", "2020-12-20 12:20:00"));
 
-        EditText etNombreAudio;
-        TextView fechaAudio;
-        public AudioViewHolder(@NonNull View itemView) {
-            super(itemView);
-            etNombreAudio = itemView.findViewById(R.id.etTitleElement);
-            fechaAudio = itemView.findViewById(R.id.txtFecha);
+    }
+
+    private void mostrarListaAudios() {
+        recyclerViewAudios.setLayoutManager(new LinearLayoutManager(getContext()));
+        listaAudiosAdapter = new ListaAudiosAdapter(getContext(), listaArrayAudios);
+        recyclerViewAudios.setAdapter(listaAudiosAdapter);
+
+        listaAudiosAdapter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String nombreAudio = listaArrayAudios.get(recyclerViewAudios.getChildAdapterPosition(view)).getTitle();
+                String fechaAudio = String.valueOf(listaArrayAudios.get(recyclerViewAudios.getChildAdapterPosition(view)).getFecha());
+                Toast.makeText(getContext(), "Seleccionó: " + nombreAudio + " " + fechaAudio, Toast.LENGTH_SHORT).show();
+                //Enviamos el objeto
+                interfaceComunicaFragments.enviarAudio(listaArrayAudios.get(recyclerViewAudios.getChildAdapterPosition(view)));
+            }
+        });
+    }
+
+    //Para comunicación con el fragment de reproducción de audio
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        if (context instanceof Activity) {
+            this.activity = (Activity) context;
+            interfaceComunicaFragments = (iComunicarFragments) this.activity;
         }
     }
 
-    public void setOnClickListener(View.OnClickListener listener){
-        this.listener = listener;
-    }
-
-    public void onClick(View view) {
-        if(listener != null){
-            listener.onClick(view);
-        }
-    }
-
-    @NonNull
-    public ListaAudiosAdapter.AudioViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.audio_item, parent, false);
-        return new ListaAudiosAdapter.AudioViewHolder(view);
-    }
-
-
-    public void onBindViewHolder(@NonNull ListaAudiosAdapter.AudioViewHolder holder, int position) {
-        holder.etNombreAudio.setText(listaArrayAudios.get(position).getTitle());
-        holder.fechaAudio.setText(listaArrayAudios.get(position).getFecha().toString());
-    }
-
-    public int getItemCount() {
-        return listaArrayAudios.size();
+    @Override
+    public void onDetach() {
+        super.onDetach();
     }
 }

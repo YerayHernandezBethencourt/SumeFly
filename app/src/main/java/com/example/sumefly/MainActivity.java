@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.os.Environment;
@@ -15,6 +16,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -27,10 +29,12 @@ import androidx.core.content.ContextCompat;
 import com.example.sumefly.database.DBAudio;
 import com.example.sumefly.database.DbUsuario;
 import com.example.sumefly.entidades.Audios;
+import com.example.sumefly.fragments.FragmentListaAudios;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -45,13 +49,15 @@ import okhttp3.Response;
 public class MainActivity extends AppCompatActivity {
 
     MediaRecorder grabadora = null;
-
-
+    MediaPlayer reproductor = null;
+    File file = null;
     int estado = 0;     //0: no grabando, 1: grabando, 2: pausado
     String ruta = null;
     ImageView imgGrabar = null;
     ImageView imgDetener = null;
     ImageView imgPausar = null;
+
+    Button btnPlay = null;
 
     //RecyclerView listaAudios;
     ArrayList<Audios> listaArrayAudios;
@@ -75,6 +81,23 @@ public class MainActivity extends AppCompatActivity {
         imgDetener = findViewById(R.id.imgDetener);
         imgPausar = findViewById(R.id.imgPausar);
 
+        btnPlay = findViewById(R.id.buttonTemporal);
+
+        File filesDir = getExternalFilesDir(null);
+        if (filesDir != null) {
+            File filesFolder = new File(filesDir, "files");
+            if (!filesFolder.exists()) {
+                if (filesFolder.mkdir()) {
+
+                    // Carpeta "files" creada con éxito
+                    Log.d(TAG, "Carpeta creada con éxito");
+                } else {
+                    // Error al crear la carpeta "files"
+                    Log.e(TAG, "Error al crear la carpeta");
+                }
+            }
+        }
+
         // Verifica si los permisos están concedidos
         if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED ||
                 ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ||
@@ -89,6 +112,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //Metodos para la grabacion
+
     //Método para comenzar la grabacion
     public void grabar(View view) {
         //Si no hay una grabacion en curso
@@ -111,7 +135,7 @@ public class MainActivity extends AppCompatActivity {
                 //Se prepara la grabadora
                 try {
                     grabadora.prepare();
-                    grabadora.start();
+                    grabadora.start();  //Comienza la grabacion
                     isRecording = true;
                     Log.d(TAG, "La grabación de audio ha comenzado");
                 } catch (IOException e) {
@@ -121,14 +145,10 @@ public class MainActivity extends AppCompatActivity {
                 isRecording = false;
                 //Se reinicia el cronometro
                 crono.setBase(SystemClock.elapsedRealtime() - tiempo);
-                //Se inicia la grabacion
-
-
                 //Comienza el cronometro
                 crono.start();
             } else if (estado == 2) {
                 //Se reanuda la grabacion
-                //assert false; preguntar que hace esto
                 grabadora.resume();
                 //Se reanuda el cronometro
                 crono.start();
@@ -203,13 +223,18 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    //Metodo para detener la grabacion
-    public void detenerGrabacion(View view) {
+    /*
+    PRUEBA DE SONIDO1 GUARDO EN LA CARPETA DE LA APP FINAL. REPRODUCE EL AUDIO CON EL BOTON DEL LAYOUT
+     */
+
+    //Metodo para reproducir la grabacion de audio con el botón del layout
+    public void reproducirGrabacion(View view) {
+
         //Si hay una grabacion en curso
         if (grabadora != null) {
             //Se detiene la grabacion
             try {
-                upload(ruta);
+                //upload(ruta);
                 isRecording = true;
                 Log.d(TAG, "La grabación de audio ha sido enviada correctamente al servidor");
             } catch (Exception e) {
@@ -217,6 +242,112 @@ public class MainActivity extends AppCompatActivity {
             }
             isRecording = false;
             grabadora.stop();
+
+            byte[] audioEnBytes = null;
+            //Convertimos el archivo de audio a un array de bytes
+            try {
+                audioEnBytes = convertirAudio(ruta);
+                Log.d(TAG, "Audio en bytes: " + audioEnBytes);
+            } catch (IOException e) {
+                Log.e(TAG, "Error al convertir el audio a bytes" + e.getMessage());
+            }
+
+            //Reproducimos el audio
+            MediaPlayer reproductor = new MediaPlayer();
+            try {
+                reproductor.setDataSource(ruta);
+                reproductor.prepare();
+                reproductor.start();
+                Toast.makeText(this, "Reproduciendo grabación...", Toast.LENGTH_SHORT).show();
+            } catch (IOException e) {
+                Log.e(TAG, "Error al reproducir el audio" + e.getMessage());
+            }
+        }
+    }
+
+    /*
+    FIN PRUEBA DE SONIDO1
+     */
+
+    /*
+    PRUEBA DE SONIDO2 GUARDO EN LA CARPETA DE LA APP FINAL. REPRODUCE EL AUDIO CON EL BOTON DE PLAY
+     */
+
+    //Metodo para reproducir la grabacion de audio con el boton de play
+    public void setBtnPlay(View view) {
+        //Si hay una grabacion en curso
+        if (grabadora != null) {
+            //Se detiene la grabacion
+            try {
+                //upload(ruta);
+                isRecording = true;
+                Log.d(TAG, "La grabación de audio ha sido enviada correctamente al servidor");
+            } catch (Exception e) {
+                Log.e(TAG, "Fallo en grabación" + e.getMessage());
+            }
+            isRecording = false;
+            grabadora.stop();
+
+            byte[] audioEnBytes = null;
+            //Convertimos el archivo de audio a un array de bytes
+            try {
+                audioEnBytes = convertirAudio(ruta);
+                Log.d(TAG, "Audio en bytes: " + audioEnBytes);
+            } catch (IOException e) {
+                Log.e(TAG, "Error al convertir el audio a bytes" + e.getMessage());
+            }
+        }
+    }
+
+    /*
+    FIN PRUEBA DE SONIDO
+     */
+
+
+    //Metodo para detener la grabacion
+    public void detenerGrabacion(View view) {
+        //Si hay una grabacion en curso
+        if (grabadora != null) {
+            //Se detiene la grabacion
+            try {
+                //upload(ruta);
+                isRecording = true;
+                Log.d(TAG, "La grabación de audio se ha deteneido correctamente");
+            } catch (Exception e) {
+                Log.e(TAG, "Fallo en grabación" + e.getMessage());
+            }
+            isRecording = false;
+            grabadora.stop();
+            //---------------------
+            /*---PRUEBA SONIDO DE GRABACION---*/
+            //Se crea un archivo
+            file = new File(getFilesDir(), "grabacion.mp3");
+            FileOutputStream outputStream = null;
+            try {
+                outputStream = new FileOutputStream(file);
+                //convertimos el archivo a bytes
+                ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                bos.writeTo(outputStream);
+                //cerramos el archivo
+                outputStream.close();
+                //mostramos por pantalla donde se ha guardado el archivo
+                Toast.makeText(this, "Archivo guardado en: " + getFilesDir() + "/grabacion.mp3", Toast.LENGTH_LONG).show();
+
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                if (outputStream != null) {
+                    try {
+                        outputStream.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            /*---FIN PRUEBA SONIDO DE GRABACION---*/
+            //---------------------
+
 
             byte[] audioEnBytes = null;
             //Convertimos el archivo de audio a un array de bytes
@@ -234,17 +365,7 @@ public class MainActivity extends AppCompatActivity {
             //Se asigna null a la grabadora
             grabadora = null;
             //Se aclara la imagen del boton de grabar
-            imgGrabar.setImageResource(R.drawable.play_image);
-            //Se aclara la imagen del boton de pausar
-            imgPausar.setImageResource(R.drawable.pause_image);
-            //Se oscurece la imagen del boton de detener
-            imgDetener.setImageResource(R.drawable.stop_image2);
-            //Se habilita el boton de grabar
-            imgGrabar.setEnabled(true);
-            //Se deshabilita el boton de pausar
-            imgPausar.setEnabled(false);
-            //Se deshabilita el boton de detener
-            imgDetener.setEnabled(false);
+            configurarBotonesDetener();
             //Se detiene el cronometro
             crono.stop();
             //Se reinicia el cronometro
@@ -269,6 +390,7 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, "Grabacion finalizada", Toast.LENGTH_SHORT).show();
             dbAudio.close();
             dbUsuario.close();
+            irADirectorio(view);
         }
     }
 
@@ -291,7 +413,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void losRegistros() {
-        Intent intent = new Intent(this, FragmentDirectorio.class);
+        Intent intent = new Intent(this, FragmentListaAudios.class);
         startActivity(intent);
     }
 
@@ -305,6 +427,20 @@ public class MainActivity extends AppCompatActivity {
         File musicDirectory = contextWrapper.getExternalFilesDir(Environment.DIRECTORY_MUSIC);
         File file = new File(musicDirectory, "testRecordingFile" + ".m4a");
         return file.getPath();
+    }
+
+    private void configurarBotonesDetener() {
+        imgGrabar.setImageResource(R.drawable.play_image);
+        imgPausar.setImageResource(R.drawable.pause_image);
+        imgDetener.setImageResource(R.drawable.stop_image2);
+        imgGrabar.setEnabled(true);
+        imgPausar.setEnabled(false);
+        imgDetener.setEnabled(false);
+    }
+
+    public void irADirectorio(View view) {
+        Intent intent = new Intent(this, DirectorioGrabaciones.class);
+        startActivity(intent);
     }
 
     public void upload(String path) throws IOException {
@@ -347,7 +483,6 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-
     //        @Override
     //                    public void onResponse(Call call, Response response) throws IOException {
     //                    if (response.isSuccessful()) {
@@ -366,10 +501,6 @@ public class MainActivity extends AppCompatActivity {
     //                    e.printStackTrace();
     //                }
     //    });
-
-
-
-
 
     public byte[] convertirAudio(String filePath) throws IOException {
         FileInputStream fileInputStream = null;
